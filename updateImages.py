@@ -2,7 +2,7 @@ from exif import Image as ExifImage
 
 from datetime import datetime
 
-import argparse, sys, filedate, os
+import argparse, sys, filedate, os, time
 
 parser = argparse.ArgumentParser(description="Update exif image metadata.")
 parser.add_argument("-id","--directory", help="Directory that contains Image files to update",default="/home/sasgnn/images/ConthroughHighSchool")
@@ -15,6 +15,20 @@ args= parser.parse_args()
 basedir=args.directory
 outputdir=args.output
 newdatetime=args.datetime
+
+# get date parts for setting  file creation and modify time
+dateparts=newdatetime.split(":")
+
+year=int(dateparts[0])
+month=int(dateparts[1])
+day=int(dateparts[2].split(" ")[0])
+
+hour=12
+minute=30
+second=30
+
+date = datetime(year=year, month=month, day=day, hour=hour, minute=minute, second=second)
+modTime = time.mktime(date.timetuple())
 
 if os.path.isdir(basedir):
 
@@ -59,17 +73,9 @@ if os.path.isdir(basedir):
             print("{}: {}".format(tag, value))
         
         # update create and modify date of new file
-        a = output_filepath
-        a_file = filedate.File(a)
- 
-        a_file.set(
-            created = newdatetime,
-            modified = newdatetime,
-            accessed = newdatetime
-        )
 
-        after = filedate.File(a)
-        print(after.get())
+        os.utime(output_filepath, (modTime, modTime))    
+        
 
 
 """ 
