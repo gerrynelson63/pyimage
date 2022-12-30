@@ -18,7 +18,7 @@ if os.path.isdir(basedir):
         img_file=os.path.join(basedir,filename)
         with open(img_file, 'rb') as image_file:
            my_image = ExifImage(image_file)
-           
+
            hasexif=my_image.has_exif
            print(hasexif)
            exif_list=my_image.list_all()
@@ -31,6 +31,17 @@ if os.path.isdir(basedir):
 
             # Print the Tag/Value Pair to the Terminal Window
             print("{}: {}".format(tag, value))
+        
+        now = datetime.now()
+        my_image.datetime="1999:05:06 22:00:07"
 
-    #now = datetime.now()
-    #my_image.datetime=now
+        output_filepath=os.path.join("/tmp/test",filename)
+
+        with open(output_filepath,'wb') as ofile:
+            ofile.write(my_image.get_file())
+""" 
+for root, dirs, file_names in os.walk(dir):
+        for file_name in file_names:
+            if file_name.lower().endswith(('jpg', 'png')):
+                img_path = os.path.join(root, file_name)
+                fix_image_dates(img_path) """
