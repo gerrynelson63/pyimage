@@ -30,6 +30,7 @@ second=30
 date = datetime(year=year, month=month, day=day, hour=hour, minute=minute, second=second)
 modTime = time.mktime(date.timetuple())
 
+# directory ?
 if os.path.isdir(basedir):
 
     # loop files in the directory
@@ -51,20 +52,24 @@ if os.path.isdir(basedir):
         #     # Print the Tag/Value Pair to the Terminal Window
         #     print("{}: {}".format(tag, value))
         
+        # set exif dat time attributes
         my_image.datetime_original=newdatetime
         my_image.datetime=newdatetime
         my_image.usercomment="Scanned by Connie"
 
         output_filepath=os.path.join(outputdir,filename)
-
+        
+        # write the image to the target directory
         with open(output_filepath,'wb') as ofile:
             ofile.write(my_image.get_file())
-            
+
+        # get new exif data    
         with open(output_filepath, 'rb') as new_image_file: 
             new_image = ExifImage(new_image_file)
         
         exif_list2=new_image.list_all()
-
+        
+        # print new exif data
         for tag in exif_list2:
             # Get the Value of the Tag in the Image
             value = new_image.get(tag)
