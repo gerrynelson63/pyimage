@@ -2,12 +2,13 @@ from exif import Image as ExifImage
 
 from datetime import datetime
 
-import argparse, sys, filedate, os, time
+import argparse, sys, os, time
 
 parser = argparse.ArgumentParser(description="Update exif image metadata.")
 parser.add_argument("-id","--directory", help="Directory that contains Image files to update",default="/home/sasgnn/images/ConthroughHighSchool")
 parser.add_argument("-od","--output", help="Directory to output new files.",default="/home/sasgnn/test")
-parser.add_argument("-dt","--datetime", help="Datetime to set on Image",default="1999:05:06 12:00:00")
+parser.add_argument("-dt","--datetime", help="Datetime to set on Image",default="1995:05:06 12:00:00")
+parser.add_argument("-n","--name", help="Name perfix for files",default="test")
 
 parser.add_argument("-q","--quiet", help="Suppress the are you sure prompt.", action='store_true')
 args= parser.parse_args()
@@ -15,6 +16,7 @@ args= parser.parse_args()
 basedir=args.directory
 outputdir=args.output
 newdatetime=args.datetime
+name=args.name
 
 # get date parts for setting  file creation and modify time
 dateparts=newdatetime.split(":")
@@ -33,8 +35,10 @@ modTime = time.mktime(date.timetuple())
 # directory ?
 if os.path.isdir(basedir):
 
+    num=0
     # loop files in the directory
     for filename in os.listdir( basedir ):
+             
         img_file=os.path.join(basedir,filename)
         with open(img_file, 'rb') as image_file:
            my_image = ExifImage(image_file)
@@ -57,6 +61,7 @@ if os.path.isdir(basedir):
         my_image.datetime=newdatetime
         my_image.usercomment="Scanned by Connie"
 
+        #output_filepath=os.path.join(outputdir,
         output_filepath=os.path.join(outputdir,filename)
         
         # write the image to the target directory
@@ -80,12 +85,14 @@ if os.path.isdir(basedir):
         # update create and modify date of new file
 
         os.utime(output_filepath, (modTime, modTime))    
-        
+   
+    num=0
+   
+    # rename the output files
+    for oldfilename in os.listdir( outputdir ): 
+          
+        num=num+1
+        newfilename=name+'-'+str(num).zfill(5)+".jpg"
+        os.rename(os.path.join(outputdir,oldfilename),os.path.join(outputdir,newfilename))    
 
 
-""" 
-for root, dirs, file_names in os.walk(dir):
-        for file_name in file_names:
-            if file_name.lower().endswith(('jpg', 'png')):
-                img_path = os.path.join(root, file_name)
-                fix_image_dates(img_path) """
