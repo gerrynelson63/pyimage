@@ -1,3 +1,4 @@
+# https://github.com/trevorhobenshield/amazon_photos
 from amazon_photos import AmazonPhotos
 
 # Initialize the AmazonPhotos object with your cookies
